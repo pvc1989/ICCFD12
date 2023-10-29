@@ -72,8 +72,23 @@ $^{*}$ Department of Engineering Mechanics, Tsinghua University, Beijing 100084,
 
 %%%% MAIN PART
 \section{Introduction}
-Please use this adapted version of the full paper to provide the 1-2 page abstract, please include details of the problem and a brief summary of your findings. 
+To construct high-order schemes on unstructured meshes, the discontinuous Gakerlin (DG) method and the flux reconstruction (FR) method are two of the most popular choices in the community of computational fluid dynamics (CFD).
+%
+Besides the inherent compactness, these schemes are much easier to implement $p$-refinement than their finite difference and finite volume counterparts.
+%
+However, like other high-order schemes, numerical oscillations would appear near discontinuities or large gradients in the solution given by a DG or FR scheme, if no shock capturing mechanism were incorporated into it.
 
+In this paper, a novel artificial viscosity based on an energy measure of oscillation and its damping rate on a DG or FR element is developed.
+%
+The oscillation energy, which measures the amplitude of numerical oscillations on a given element, is obtained by evaluating the $L_2$-norm of the difference between the numerical solutions on the element and its neighbors.
+%
+The damping rate of this energy on an element can be derived under the assumptions of linear flux--gradient relation and constant viscosity distribution.
+%
+The value of viscosity for suppressing numerical oscillations is obtained by taking the ratio of the oscillation energy with respect to the product of its damping rate and prescribed time step.
+%
+Such element-wise constant viscosity distribution is reconstructed to be $C_0$ constinuous on element interfaces.
+
+Standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaing the high-orderness of the DG or FR solution.
 
 \section{Problem Statement}
 This document allows you to easily include references \cite{book,journalpaper}, equations, figures (see Figure \figu{logo}) or anything else you
@@ -102,7 +117,7 @@ simulation the unsteady nature of the flow.  An innovative method to simulate th
 % \end{figure}
 
 
-\subsection{Subsection Title Example}
+\section{Subsection Title Example}
 
 \subsubsection{Sub-subsection Title Example}
 
