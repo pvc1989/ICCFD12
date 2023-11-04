@@ -111,8 +111,50 @@ for a non-exact solution.  Computational fluid dynamics~\cite{paper} can be used
 simulation the unsteady nature of the flow.  An innovative method to simulate the heat equation could even be submitted to ICCFD10.
 
 \section{Results}
+In this section, the effectiveness of the artificial viscosity proposed in the previous section is demonstrated by some standard test cases.
+The computational domain is divide into $100$ elements uniformly.
+A fifth-order ($p=4$) FR scheme using the $g_2$ correction function, which is equivalent to a DGSEM scheme of the same order of accuracy, is used for spatial discretization.
+The resulting ODE system is solved by an explicit three-stage third-order strong stability preserving Runge--Kutta method.
 
 \subsection{Shock Tube Problems}
+Riemann problems, as well as their exact and approximate solvers, play a pivot role in the development of CFD schemes.
+Among the infinite number of Riemann problems of the 1D Euler system, the Sod problem with the initial condition
+\begin{equation}
+\mqty[\rho & u & p]_{t=0}
+=
+\begin{cases}
+\mqty[1 & 0 & 1], &x<0,\\
+\mqty[0.125 & 0 & 0.1], &x>0,\\
+\end{cases}
+\end{equation}
+and the Lax problem in with the initial condition
+\begin{equation}
+\mqty[\rho & u & p]_{t=0}
+=
+\begin{cases}
+\mqty[0.445 & 0.698 & 3.528], &x<0,\\
+\mqty[0.5 & 0 & 0.571], &x>0,\\
+\end{cases}
+\end{equation}
+are two of the most famous ones that are frequently used for testing shock capturing mechanisms.
+
+Figure \ref{fig:sod} and \ref{fig:lax} gives the solution (the "Actual" curves) of these two problems at the moment ($t=0.5$ for Sod, $t=0.3$ for Lax) and the viscosity distributions for each characteristic variables at all time steps.
+The "Expect" curves in these figures are the exact solutions obtained from analytical procedures.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.49\textwidth]{./sod/Frame100.pdf}
+  \includegraphics[width=.49\textwidth]{./sod/Viscosity.pdf}
+  \caption{Solution and viscosity distribution of the Sod problem.}
+  \label{fig:sod}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.49\textwidth]{./lax/Frame100.pdf}
+  \includegraphics[width=.49\textwidth]{./lax/Viscosity.pdf}
+  \caption{Solution and viscosity distribution of the Lax problem.}
+  \label{fig:lax}
+\end{figure}
 
 \subsection{The Shu--Osher Problem}\label{sec:shu_osher}
 This problem is designed to mimic the interaction of a running shock with a standing isentropic wave.
@@ -127,7 +169,8 @@ The time range of interest is $t\in[0, 1.8]$ with the initial condition set to b
 \end{cases}
 \end{equation}
 
-Figure \ref{fig:shu_osher} gives the solution of this problem at the final ($t=1.8$) moment and the viscosity distribution for each characteristic variables at all time steps.
+Figure \ref{fig:shu_osher} gives the solution (the "Actual" curve) of this problem at the final ($t=1.8$) moment and the viscosity distribution for each characteristic variables at all time steps.
+The "Expect" curve in this figure is the approximate solution given by the same FR scheme with a $p$-weighted limiter on a finer mesh (200 elements).
 \begin{figure}[H]
   \centering
   \includegraphics[width=.49\textwidth]{./shu_osher/final/Frame100.pdf}
