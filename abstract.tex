@@ -28,6 +28,7 @@
 \renewcommand{\headrulewidth}{0pt}
 
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{physics}
 \usepackage[pdftex]{graphicx}
 \usepackage[T1]{fontenc}
 
@@ -91,7 +92,7 @@ Such element-wise constant viscosity distribution is reconstructed to be $C_0$ c
 Standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaing the high-orderness of the DG or FR solution.
 
 \section{Problem Statement}
-This document allows you to easily include references \cite{book,journalpaper}, equations, figures (see Figure \figu{logo}) or anything else you
+This document allows you to easily include references \cite{book,journalpaper}, equations, figures or anything else you
 desire into a clean and compact environment of \LaTeX.  For example if you'd like to impress a date you can write
 the unsteady heat equation as
 
@@ -109,19 +110,31 @@ $$\mathbf{V} = y^2 z - \text{cos}(0.1 x)$$
 for a non-exact solution.  Computational fluid dynamics~\cite{paper} can be used to discretize the equations, apply boundary conditions and 
 simulation the unsteady nature of the flow.  An innovative method to simulate the heat equation could even be submitted to ICCFD10.
 
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[height=2.0in]{exampleFigure.jpg}
-%   \caption{This is the logo of ICCFD.}
-%   \lafi{logo}
-% \end{figure}
+\section{Results}
 
+\subsection{Shock Tube Problems}
 
-\section{Subsection Title Example}
+\subsection{The Shu--Osher Problem}\label{sec:shu_osher}
+This problem is designed to mimic the interaction of a running shock with a standing isentropic wave.
+The computational domain is $x\in[0, 10]$ with two no-reflection conditions applied at the left and right boundaries.
+The time range of interest is $t\in[0, 1.8]$ with the initial condition set to be
+\begin{equation}
+\mqty[\rho & u & p]_{t=0}
+=
+\begin{cases}
+\mqty[3.857143 & 2.629369 & 10.33333], &x\in[0,1);\\
+\mqty[1+0.2\sin(5x) & 0 & 1], &x\in(1,10].
+\end{cases}
+\end{equation}
 
-\subsubsection{Sub-subsection Title Example}
-
-
+Figure \ref{fig:shu_osher} gives the solution of this problem at the final ($t=1.8$) moment and the viscosity distribution for each characteristic variables at all time steps.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.49\textwidth]{./shu_osher/final/Frame100.pdf}
+  \includegraphics[width=.49\textwidth]{./shu_osher/final/Viscosity.pdf}
+  \caption{Solution and viscosity distribution of the Shu--Osher problem.}
+  \label{fig:shu_osher}
+\end{figure}
 
 %%%% BIBLIOGRAPHY
 \bibspacing=\dimen 100
