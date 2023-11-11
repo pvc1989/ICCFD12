@@ -92,23 +92,47 @@ Such element-wise constant viscosity distribution is reconstructed to be $C_0$ c
 Standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaing the high-orderness of the DG or FR solution.
 
 \section{Problem Statement}
-This document allows you to easily include references \cite{book,journalpaper}, equations, figures or anything else you
-desire into a clean and compact environment of \LaTeX.  For example if you'd like to impress a date you can write
-the unsteady heat equation as
+\subsection{DG and FR Schemes}
+To obtain an element-wise $p$-degree polynomial approximation of the solution of the 1D conservation law
+$$
+\pdv{u}{t}+\pdv{f(u)}{x}=0,
+$$
+one may first introduce a Lagrange interpolation for both $u$ and $f$ on the $j$th element:
+$$
+u^h_j(x,t) = \sum_{k=0}^{p} L_{j,k}(x)\,\hat{u}_{j,k}(t),\quad
+f^h_j(x,t) = \sum_{k=0}^{p} L_{j,k}(x)\,f(\hat{u}_{j,k}(t)),
+$$
+in which $L_{j,k}$ is the Lagrange basis associated with the $k$th node (a.k.a. solution point) on the $j$th element, and $\hat{u}_{j,k}$ is the value of the approximate solution $u^h$ on that node.
+An ordinary differential equation (ODE) system can then be derived from either the DG method or the FR method.
 
-\begin{eqnarray}
-\frac{\partial \mathbf{V}}{\partial t} - \alpha \left( \frac{\partial^2 \mathbf{V}}{\partial x^2} +
-       \frac{\partial^2 \mathbf{V}}{\partial y^2} +
-       \frac{\partial^2 \mathbf{V}}{\partial z^2} \right)
-= 0
-\laeq{heat}
-\end{eqnarray}
-where $x, y, z$ are the space dimensions and $\alpha$ is a parameter.  If you felt inclined you could define $\mathbf{V}$ as
-%
-$$\mathbf{V} = y^2 z - \text{cos}(0.1 x)$$
-%
-for a non-exact solution.  Computational fluid dynamics~\cite{paper} can be used to discretize the equations, apply boundary conditions and 
-simulation the unsteady nature of the flow.  An innovative method to simulate the heat equation could even be submitted to ICCFD10.
+\subsection{Oscillation Energy}
+To measure the numerical oscillations quantitatively, we define the oscillation energy on the $j$th element to be
+$$
+\Delta K_j = \int_{x_{j-1/2}}^{x_{j}}\left(u_{j}^{h}-u_{j-1}^{h}\right)^{2}\dd{x}+\int_{x_{j}}^{x_{j+1/2}}\left(u_{j}^{h}-u_{j+1}^{h}\right)^{2}\dd{x},
+$$
+which is the square of the $L_2$-norm of difference between the solution on $E_j$ and those on its immediate neighbors.
+The integrals are as cheap as weighted summations of nodal values if solution points are also Gaussian quadrature points, which is a common practice in the DG spectral element method (SEM).
+
+\subsection{Artificial Viscosity}
+To dissipate the oscillation energy just defined, we introduce an artificial viscosity term, which is linear to the gradient of solution, to the conservation law, which becomes
+$$
+\pdv{u}{t}+\pdv{f(u)}{x}=\pdv{x}\qty(\nu\pdv{u}{x}),\quad \nu >= 0.
+$$
+The ODE system given by the DG or FR scheme becomes
+$$
+\dv{t}\ket{\hat{u}_{j}}=\cdots+\nu_{j}\left(\underline{D}_{j}\ket{\hat{u}_{j}}+\underline{E}_{j}\ket{\hat{u}_{j-1}}+\underline{F}_{j}\ket{\hat{u}_{j+1}}\right),
+$$
+where $\ket{\hat{u}_{j}}, \ket{\hat{u}_{j-1}}, \ket{\hat{u}_{j+1}}$ are column matrices formed by nodal values on $E_{j}, E_{j-1}, E_{j+1}$ respectively, and $ \underline{D}_{j}, \underline{E}_{j}, \underline{F}_{j} $ are constant square matrices given the spatial discretization and the numerical flux on element interfaces.
+The dissipattion rate of the kinetic energy is
+$$
+\dv{t}\underbrace{\frac{1}{2}\Vert u_{j}^{h}\Vert_{L_{2}(E_{j})}^{2}}_{K_{j}}=\bra{\hat{u}_{j}}\underline{W}_{j}\dv{t}\ket{\hat{u}_{j}}=\cdots+\nu_{j}\,\underbrace{\left(\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{j}\ket{\hat{u}_{j}}+\cdots\right)}_{G_{j}},
+$$
+where $\underline{W}_{j}$ is the diagonal matrix form by Gaussian quadrature weights.
+The value of viscosity is given by
+$$
+\nu_{j}=\frac{\Delta K_{j}}{-G_{j}\,\tau}\impliedby\dv{t}K_{j}=\cdots+\nu_{j}\,G_{j},
+$$
+which means the oscillation energy $\Delta K_{j}$ is dissipated by the viscosity within a prescribed length of time $\tau$.
 
 \section{Results}
 In this section, the effectiveness of the artificial viscosity proposed in the previous section is demonstrated by some standard test cases.
