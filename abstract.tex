@@ -73,7 +73,7 @@ $^{*}$ Department of Engineering Mechanics, Tsinghua University, Beijing 100084,
 
 %%%% MAIN PART
 \section{Introduction}
-To construct high-order schemes on unstructured meshes, the discontinuous Gakerlin (DG) method and the flux reconstruction (FR) method are two of the most popular choices in the community of computational fluid dynamics (CFD).
+To construct high-order schemes on unstructured meshes, the discontinuous Gakerlin (DG) method \cite{Cockburn_2001} and the flux reconstruction (FR) method \cite{Huynh_2014} are two of the most popular choices in the community of computational fluid dynamics (CFD).
 %
 Besides the inherent compactness, these schemes are much easier to implement $p$-refinement than their finite difference and finite volume counterparts.
 %
@@ -111,7 +111,7 @@ $$
 \Delta K_j = \int_{x_{j-1/2}}^{x_{j}}\left(u_{j}^{h}-u_{j-1}^{h}\right)^{2}\dd{x}+\int_{x_{j}}^{x_{j+1/2}}\left(u_{j}^{h}-u_{j+1}^{h}\right)^{2}\dd{x},
 $$
 which is the square of the $L_2$-norm of difference between the solution on $E_j$ and those on its immediate neighbors.
-The integrals are as cheap as weighted summations of nodal values if solution points are also Gaussian quadrature points, which is a common practice in the DG spectral element method (SEM).
+The integrals are as cheap as weighted summations of nodal values if solution points are also Gaussian quadrature points, which is a common practice in the DG spectral element method (SEM) \cite{Li_2020}.
 
 \subsection{Artificial Viscosity}
 To dissipate the oscillation energy just defined, we introduce an artificial viscosity term, which is linear to the gradient of solution, to the conservation law, which becomes
@@ -141,7 +141,7 @@ A fifth-order ($p=4$) FR scheme using the $g_2$ correction function, which is eq
 The resulting ODE system is solved by an explicit three-stage third-order strong stability preserving Runge--Kutta method.
 
 \subsection{Shock Tube Problems}
-Riemann problems, as well as their exact and approximate solvers, play a pivot role in the development of CFD schemes.
+Riemann problems, as well as their exact and approximate solvers, play a pivot role in the development of CFD schemes \cite{Toro_2009}.
 Among the infinite number of Riemann problems of the 1D Euler system, the Sod problem with the initial condition
 \begin{equation}
 \mqty[\rho & u & p]_{t=0}
@@ -181,7 +181,7 @@ The "Expect" curves in these figures are the exact solutions obtained from analy
 \end{figure}
 
 \subsection{The Shu--Osher Problem}\label{sec:shu_osher}
-This problem is designed to mimic the interaction of a running shock with a standing isentropic wave.
+This problem is designed to mimic the interaction of a running shock with a standing isentropic wave \cite{Shu_1989}.
 The computational domain is $x\in[0, 10]$ with two no-reflection conditions applied at the left and right boundaries.
 The time range of interest is $t\in[0, 1.8]$ with the initial condition set to be
 \begin{equation}
@@ -194,7 +194,7 @@ The time range of interest is $t\in[0, 1.8]$ with the initial condition set to b
 \end{equation}
 
 Figure \ref{fig:shu_osher} gives the solution (the "Actual" curve) of this problem at the final ($t=1.8$) moment and the viscosity distribution for each characteristic variables at all time steps.
-The "Expect" curve in this figure is the approximate solution given by the same FR scheme with a $p$-weighted limiter on a finer mesh (200 elements).
+The "Expect" curve in this figure is the approximate solution given by the same FR scheme with a $p$-weighted limiter \cite{Li_2020} on a finer mesh (200 elements).
 \begin{figure}[H]
   \centering
   \includegraphics[width=.49\textwidth]{./shu_osher/final/Frame100.pdf}
