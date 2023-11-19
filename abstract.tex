@@ -50,7 +50,7 @@ Kobe, Japan, July 14-19, 2024
 
 
 \title{
-\bf A Novel Energy-based Artificial Viscosity for Suppressing Numerical Oscillations in Discontinuous Gakerlin and Flux Reconstruction Schemes
+\bf A Novel Energy-based Artificial Viscosity for Suppressing Numerical Oscillations in Discontinuous Galerkin and Flux Reconstruction Schemes
 }
 \author{
 Weicheng Pei$^{*}$ and Yu-Xin Ren$^{*}$\\
@@ -73,7 +73,7 @@ $^{*}$ Department of Engineering Mechanics, Tsinghua University, Beijing 100084,
 
 %%%% MAIN PART
 \section{Introduction}
-To construct high-order schemes on unstructured meshes, the discontinuous Gakerlin (DG) method \cite{Cockburn_2001} and the flux reconstruction (FR) method \cite{Huynh_2014} are two of the most popular choices in the community of computational fluid dynamics (CFD).
+To construct high-order schemes on unstructured meshes, the discontinuous Galerkin (DG) method \cite{Cockburn_2001} and the flux reconstruction (FR) method \cite{Huynh_2014} are two of the most popular choices in the community of computational fluid dynamics (CFD).
 %
 Besides the inherent compactness, these schemes are much easier to implement $p$-refinement than their finite difference and finite volume counterparts.
 %
@@ -87,9 +87,9 @@ The damping rate of this energy on an element can be derived under the assumptio
 %
 The value of viscosity for suppressing numerical oscillations is obtained by taking the ratio of the oscillation energy with respect to the product of its damping rate and prescribed time step.
 %
-Such element-wise constant viscosity distribution is reconstructed to be $C_0$ constinuous on element interfaces.
+Such element-wise constant viscosity distribution is reconstructed to be $C_0$ continuous on element interfaces.
 
-Standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaing the high-orderness of the DG or FR solution.
+Standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaining the high-order accuracy of the DG or FR solution.
 
 \section{Problem Statement}
 \subsection{DG and FR Schemes}
@@ -116,14 +116,14 @@ The integrals are as cheap as weighted summations of nodal values if solution po
 \subsection{Artificial Viscosity}
 To dissipate the oscillation energy just defined, we introduce an artificial viscosity term, which is linear to the gradient of solution, to the conservation law, which becomes
 $$
-\pdv{u}{t}+\pdv{f(u)}{x}=\pdv{x}\qty(\nu\pdv{u}{x}),\quad \nu >= 0.
+\pdv{u}{t}+\pdv{f(u)}{x}=\pdv{x}\qty(\nu\pdv{u}{x}),\quad \nu \ge 0.
 $$
 The ODE system given by the DG or FR scheme becomes
 $$
 \dv{t}\ket{\hat{u}_{j}}=\cdots+\nu_{j}\left(\underline{D}_{j}\ket{\hat{u}_{j}}+\underline{E}_{j}\ket{\hat{u}_{j-1}}+\underline{F}_{j}\ket{\hat{u}_{j+1}}\right),
 $$
 where $\ket{\hat{u}_{j}}, \ket{\hat{u}_{j-1}}, \ket{\hat{u}_{j+1}}$ are column matrices formed by nodal values on $E_{j}, E_{j-1}, E_{j+1}$ respectively, and $ \underline{D}_{j}, \underline{E}_{j}, \underline{F}_{j} $ are constant square matrices given the spatial discretization and the numerical flux on element interfaces.
-The dissipattion rate of the kinetic energy is
+The dissipation rate of the kinetic energy is
 $$
 \dv{t}\underbrace{\frac{1}{2}\Vert u_{j}^{h}\Vert_{L_{2}(E_{j})}^{2}}_{K_{j}}=\bra{\hat{u}_{j}}\underline{W}_{j}\dv{t}\ket{\hat{u}_{j}}=\cdots+\nu_{j}\,\underbrace{\left(\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{j}\ket{\hat{u}_{j}}+\cdots\right)}_{G_{j}},
 $$
@@ -136,8 +136,8 @@ which means the oscillation energy $\Delta K_{j}$ is dissipated by the viscosity
 
 \section{Results}
 In this section, the effectiveness of the artificial viscosity proposed in the previous section is demonstrated by some standard test cases.
-The computational domain is divide into $100$ elements uniformly.
-A fifth-order ($p=4$) FR scheme using the $g_2$ correction function, which is equivalent to a DGSEM scheme of the same order of accuracy, is used for spatial discretization.
+The computational domain is divided into $100$ elements uniformly.
+A fifth-order ($p=4$) FR scheme using the $g_2$ correction function, which is equivalent to a DG SEM scheme of the same order of accuracy, is used for spatial discretization.
 The resulting ODE system is solved by an explicit three-stage third-order strong stability preserving Runge--Kutta method.
 
 \subsection{Shock Tube Problems}
