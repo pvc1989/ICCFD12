@@ -59,6 +59,9 @@ $^{*}$ Department of Engineering Mechanics, Tsinghua University, Beijing 100084,
 }
 \date{}
 
+\usepackage[colorlinks]{hyperref}
+\newcommand{\ignore}[1]{}
+
 \begin{document}
 
 %%%% TITLE
@@ -73,13 +76,14 @@ $^{*}$ Department of Engineering Mechanics, Tsinghua University, Beijing 100084,
 
 %%%% MAIN PART
 \section{Introduction}
-To construct high-order schemes on unstructured meshes, the discontinuous Galerkin (DG) method \cite{Cockburn_2001} and the flux reconstruction (FR) method \cite{Huynh_2014} are two of the most popular choices in the community of computational fluid dynamics (CFD).
+To construct high-order schemes on unstructured meshes, the discontinuous Galerkin (DG) method \cite{Li_2020} and the flux reconstruction (FR) method \cite{Huynh_2014} are two of the most popular choices in the community of computational fluid dynamics (CFD).
 %
 Besides the inherent compactness, these schemes are much easier to implement $p$-refinement than their finite difference and finite volume counterparts.
 %
 However, like other high-order schemes, numerical oscillations would appear near discontinuities or large gradients in the solution given by a DG or FR scheme, if no shock capturing mechanism were incorporated into it.
-
+%
 In this paper, a novel artificial viscosity based on an energy measure of oscillation and its damping rate on a DG or FR element is developed.
+\ignore{
 %
 The oscillation energy, which measures the amplitude of numerical oscillations on a given element, is obtained by evaluating the $L_2$-norm of the difference between the numerical solutions on the element and its neighbors.
 %
@@ -88,15 +92,16 @@ The damping rate of this energy on an element can be derived under the assumptio
 The value of viscosity for suppressing numerical oscillations is obtained by taking the ratio of the oscillation energy with respect to the product of its damping rate and prescribed time step.
 %
 Such element-wise constant viscosity distribution is reconstructed to be $C_0$ continuous on element interfaces.
+}
 
-Standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaining the high-order accuracy of the DG or FR solution.
-
-\section{Problem Statement}
+\section{Methodology}
 \subsection{DG and FR Schemes}
-To obtain an element-wise $p$-degree polynomial approximation of the solution of the 1D conservation law
+To obtain an element-wise $p$-degree polynomial approximation of the solution of the one-dimensional conservation law,
+\ignore{
 $$
 \pdv{u}{t}+\pdv{f(u)}{x}=0,
 $$
+}
 one may first introduce a Lagrange interpolation for both $u$ and $f$ on the $j$th element:
 $$
 u^h_j(x,t) = \sum_{k=0}^{p} L_{j,k}(x)\,\hat{u}_{j,k}(t),\quad
@@ -128,11 +133,11 @@ $$
 \dv{t}\underbrace{\frac{1}{2}\Vert u_{j}^{h}\Vert_{L_{2}(E_{j})}^{2}}_{K_{j}}=\bra{\hat{u}_{j}}\underline{W}_{j}\dv{t}\ket{\hat{u}_{j}}=\cdots+\nu_{j}\,\underbrace{\left(\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{j}\ket{\hat{u}_{j}}+\cdots\right)}_{G_{j}},
 $$
 where $\underline{W}_{j}$ is the diagonal matrix form by Gaussian quadrature weights.
-The value of viscosity is given by
+The value of viscosity is
 $$
 \nu_{j}=\frac{\Delta K_{j}}{-G_{j}\,\tau}\impliedby\dv{t}K_{j}=\cdots+\nu_{j}\,G_{j},
 $$
-which means the oscillation energy $\Delta K_{j}$ is dissipated by the viscosity within a prescribed length of time $\tau$.
+which means the oscillation energy $\Delta K_{j}$ is dissipated by the viscosity within a prescribed time range $\tau$.
 
 \section{Results}
 In this section, the effectiveness of the artificial viscosity proposed in the previous section is demonstrated by some standard test cases.
@@ -140,6 +145,7 @@ The computational domain is divided into $100$ elements uniformly.
 A fifth-order ($p=4$) FR scheme using the $g_2$ correction function, which is equivalent to a DG SEM scheme of the same order of accuracy, is used for spatial discretization.
 The resulting ODE system is solved by an explicit three-stage third-order strong stability preserving Runge--Kutta method.
 
+\ignore{
 \subsection{Shock Tube Problems}
 Riemann problems, as well as their exact and approximate solvers, play a pivot role in the development of CFD schemes \cite{Toro_2009}.
 Among the infinite number of Riemann problems of the 1D Euler system, the Sod problem with the initial condition
@@ -181,7 +187,9 @@ The "Expect" curves in these figures are the exact solutions obtained from analy
 \end{figure}
 
 \subsection{The Shu--Osher Problem}\label{sec:shu_osher}
-This problem is designed to mimic the interaction of a running shock with a standing isentropic wave \cite{Shu_1989}.
+}
+The Shu--Osher problem is designed to mimic the interaction of a running shock with a standing isentropic wave \cite{Shu_1989}.
+\ignore{
 The computational domain is $x\in[0, 10]$ with two no-reflection conditions applied at the left and right boundaries.
 The time range of interest is $t\in[0, 1.8]$ with the initial condition set to be
 \begin{equation}
@@ -192,9 +200,9 @@ The time range of interest is $t\in[0, 1.8]$ with the initial condition set to b
 \mqty[1+0.2\sin(5x) & 0 & 1], &x\in(1,10].
 \end{cases}
 \end{equation}
-
-Figure \ref{fig:shu_osher} gives the solution (the "Actual" curve) of this problem at the final ($t=1.8$) moment and the viscosity distribution for each characteristic variables at all time steps.
-The "Expect" curve in this figure is the approximate solution given by the same FR scheme with a $p$-weighted limiter \cite{Li_2020} on a finer mesh (200 elements).
+}
+Figure \ref{fig:shu_osher} gives the solution (the \emph{Actual} curve) of this problem at the final ($t=1.8$) moment and the viscosity distribution for each characteristic variables at all time steps.
+The \emph{Expect} curve in this figure is the approximate solution given by the same FR scheme with a $p$-weighted limiter \cite{Li_2020} on a finer mesh (200 elements).
 \begin{figure}[H]
   \centering
   \includegraphics[width=.49\textwidth]{./shu_osher/final/Frame100.pdf}
@@ -202,6 +210,8 @@ The "Expect" curve in this figure is the approximate solution given by the same 
   \caption{Solution and viscosity distribution of the Shu--Osher problem.}
   \label{fig:shu_osher}
 \end{figure}
+
+These standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaining the high-order accuracy of the DG or FR solution.
 
 %%%% BIBLIOGRAPHY
 \bibspacing=\dimen 100
