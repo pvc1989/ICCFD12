@@ -174,10 +174,103 @@ $$
 %
 In general, the dimension of a nodal basis is much larger than that of the modal basis with the same $(P,D)$.
 
-\subsection{Fluxes on Element Interfaces}
-
 \subsection{ODE Systems from the DG and FR Methods}
 An ordinary differential equation (ODE) system can then be derived from either the DG method or the FR method.
+
+\subsection{Direct Viscous Fluxes on Element Interfaces}
+Once an element-wise polynomial approximation is applied to the solution $u$, the flux $f(u,\grad u)$ is generally discontinuous on the interfaces of adjacent elements.
+%
+For the convection term in a conservation law, it is now a common practice to invoke an exact or an approximate Riemann solver \cite{Toro_2009}.
+However, methods for getting the common diffusion flux are still actively been developed.
+
+%
+For solving problems involving diffusion terms, people in the field of DG usually introduce a new variable $\vec{q} \equiv \grad u$ and transform the second-order partial differential equation (PDE) into a first-order PDE system.
+%
+Schemes for getting the common value of $\vec{q}$ on element interfaces are then designed.
+%
+The famous Bassi--Rebay (BR) methods \cite{Bassi_1997,Bassi_2005} and the more general local DG (LDG) method \cite{Cockburn_1998b} all apply this \emph{indirect} procedure.
+%
+Recently, a method called direct DG (DDG) \cite{Liu_2009_DDG,Cheng_2016,Yang_2019} is becoming more and more popular, due to the fact that it gives the common value of $\grad u$ \emph{directly} without introducing the auxillary variable $\vec{q}$.
+%
+The common gradients are obtained by adding the penalty on jumps of value and second-order derivatives to the averaged gradient:
+$$
+\begin{bmatrix}\partial_{x}\,u\\
+\partial_{y}\,u
+\end{bmatrix}_{\partial E}=\beta_{0}\,\Delta^{-1}\begin{bmatrix}n_{x}\,u\\
+n_{y}\,u
+\end{bmatrix}_{\mathrm{R}-\mathrm{L}}+\begin{bmatrix}\partial_{x}\,u\\
+\partial_{y}\,u
+\end{bmatrix}_{(\mathrm{R}+\mathrm{L})/2}+\beta_{1}\,\Delta
+\begin{bmatrix}
+n_x\,\partial^2_{xx}\,u + n_y\,\partial^2_{xy}\,u\\
+n_x\,\partial^2_{yx}\,u + n_y\,\partial^2_{yy}\,u
+\end{bmatrix}_{\mathrm{R}-\mathrm{L}},
+$$
+in which $\Delta$ is the characteristic length of the element, and the $\beta$'s are the penalty weights.
+%
+
+%
+It is straight forward to apply the DDG method to polynomials given by orthonormal expansions defined in physical coordinates (i.e. $\vec{r}\equiv(x,y)$).
+%
+However, it is more expensive and error-prone to be applied to solutions using Lagrange interpolation in parametric coordinates (i.e. $\vec{\rho}\equiv(\xi,\eta)$).
+%
+If, the interpolation is applied to $u$, the second-order derivatives are
+$$
+\begin{aligned}\begin{bmatrix}\partial_{xx}^{2}\,u & \partial_{xy}^{2}\,u\\
+\partial_{yx}^{2}\,u & \partial_{yy}^{2}\,u
+\end{bmatrix} & =\underbrace{\underline{J}^{-1}\begin{bmatrix}\partial_{\xi}\\
+\partial_{\eta}
+\end{bmatrix}}_{\begin{bmatrix}\partial_{x}\\
+\partial_{y}
+\end{bmatrix}}\underbrace{\left(\mathinner{\begin{bmatrix}\partial_{\xi}\,u & \partial_{\eta}\,u\end{bmatrix}}\underline{J}^{-T}\right)}_{\begin{bmatrix}\partial_{x}\,u & \partial_{y}\,u\end{bmatrix}}\\
+ & =\underline{J}^{-1}\mathinner{\begin{bmatrix}\partial_{\xi}\mathinner{\begin{bmatrix}\partial_{\xi}\,u & \partial_{\eta}\,u\end{bmatrix}}\\
+\partial_{\eta}\mathinner{\begin{bmatrix}\partial_{\xi}\,u & \partial_{\eta}\,u\end{bmatrix}}
+\end{bmatrix}}\underline{J}^{-T}+\underline{J}^{-1}\begin{bmatrix}\mathinner{\begin{bmatrix}\partial_{\xi}\,u & \partial_{\eta}\,u\end{bmatrix}}\partial_{\xi}\,\underline{J}^{-T}\\
+\mathinner{\begin{bmatrix}\partial_{\xi}\,u & \partial_{\eta}\,u\end{bmatrix}}\partial_{\eta}\,\underline{J}^{-T}
+\end{bmatrix},
+\end{aligned}
+$$
+in which the derivatives of the Jacobian matrix
+$$
+\pdv{\underline{J}^{-T}}{\xi}=\left(-\underline{J}^{-1}\,\pdv{\underline{J}}{\xi}\,\underline{J}^{-1}\right)^{T},\quad
+\pdv{\underline{J}^{-T}}{\eta}=\left(-\underline{J}^{-1}\,\pdv{\underline{J}}{\eta}\,\underline{J}^{-1}\right)^{T},
+$$
+should be precomputed and cached on each flux point.
+%
+%
+If the interpolation is applied to $U\equiv Ju$, the second-order derivatives are more complex:
+$$
+\begin{aligned}\begin{bmatrix}\partial^2_{xx}\,u & \partial^2_{xy}\,u\\
+\partial^2_{yx}\,u & \partial^2_{yy}\,u
+\end{bmatrix} & =\underbrace{\underline{J}^{-1}\begin{bmatrix}\partial_{\xi}\\
+\partial_{\eta}
+\end{bmatrix}}_{\begin{bmatrix}\partial_{x}\\
+\partial_{y}
+\end{bmatrix}}\underbrace{\left(\mathinner{\begin{bmatrix}\partial_{\xi}\,U & \partial_{\eta}\,U\end{bmatrix}}\underline{J}^{-T}\,J^{-1}-\mathinner{\begin{bmatrix}\partial_{\xi}\,J & \partial_{\eta}\,J\end{bmatrix}}\underline{J}^{-T}\,J^{-2}\,U\right)}_{\begin{bmatrix}\partial_{x}\,u & \partial_{y}\,u\end{bmatrix}}\\
+ & =\underline{J}^{-1}\mathinner{\begin{bmatrix}\partial_{\xi}\,\partial_{\xi}\,U & \partial_{\xi}\,\partial_{\eta}\,U\\
+\partial_{\eta}\,\partial_{\xi}\,U & \partial_{\eta}\,\partial_{\eta}\,U
+\end{bmatrix}}\underline{J}^{-T}\,J^{-1}+\cdots,
+\end{aligned}
+$$
+%
+$$
+\begin{aligned}\partial_{\xi}\left(\mathinner{\begin{bmatrix}\partial_{\xi}\,U & \partial_{\eta}\,U\end{bmatrix}}\underline{J}^{-T}\,J^{-1}\right) & =\mathinner{\begin{bmatrix}\partial_{\xi}\,\partial_{\xi}\,U & \partial_{\xi}\,\partial_{\eta}\,U\end{bmatrix}}\underline{J}^{-T}\,J^{-1}\\
+ & +\mathinner{\begin{bmatrix}\partial_{\xi}\,U & \partial_{\eta}\,U\end{bmatrix}}\left(\pdv{\underline{J}^{-T}}{\xi}\,J^{-1}+\underline{J}^{-T}\left(\partial_{\xi}\,J^{-1}\right)\right),
+\end{aligned}
+$$
+$$
+\begin{aligned}\partial_{\xi}\left(\mathinner{\begin{bmatrix}\partial_{\xi}\,J & \partial_{\eta}\,J\end{bmatrix}}\underline{J}^{-T}\,J^{-2}\,U\right) & =\mathinner{\begin{bmatrix}\partial_{\xi}\,\partial_{\xi}\,J & \partial_{\xi}\,\partial_{\eta}\,J\end{bmatrix}}\underline{J}^{-T}\,J^{-2}\,U\\
+ & +\mathinner{\begin{bmatrix}\partial_{\xi}\,J & \partial_{\eta}\,J\end{bmatrix}}\left(\pdv{\underline{J}^{-T}}{\xi}\,J^{-2}\,U+\underline{J}^{-T}\,\pdv{J^{-2}}{\xi}\,U+\underline{J}^{-T}\,J^{-2}\,\pdv{U}{\xi}\right),
+\end{aligned}
+$$
+in which, the derivatives of Jacobian determinant
+$$
+\pdv{J^{-1}}{\xi}=-J^{-2}\,\pdv{J}{\xi},\quad\pdv{J^{-2}}{\xi}=-2J^{-3}\,\pdv{J}{\xi},
+$$
+$$
+\pdv{J}{\xi}=\pdv{\det(\underline{J})}{\xi}=\det(\underline{J})\tr(\underline{J}^{-1}\,\pdv{\underline{J}}{\xi})=J\tr(\underline{J}^{-1}\,\pdv{\underline{J}}{\xi}),
+$$
+should also be cached.
 
 \subsection{Oscillation Energy}
 To measure the numerical oscillations quantitatively, we define the oscillation energy on the $j$th element to be
