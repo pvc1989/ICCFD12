@@ -59,7 +59,8 @@ $^{*}$ Department of Engineering Mechanics, Tsinghua University, Beijing 100084,
 }
 \date{}
 
-\usepackage[colorlinks]{hyperref}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage[]{physics}
 
 \begin{document}
 
@@ -75,11 +76,21 @@ $^{*}$ Department of Engineering Mechanics, Tsinghua University, Beijing 100084,
 
 %%%% MAIN PART
 \section{Introduction}
-To construct high-order schemes on unstructured meshes, the discontinuous Galerkin (DG) method \cite{Li_2020} and the flux reconstruction (FR) method \cite{Huynh_2014} are two of the most popular choices in the community of computational fluid dynamics (CFD).
+To construct high-order schemes on unstructured meshes, the discontinuous Galerkin (DG) method \cite{Cockburn_2001,Hesthaven_2008} and the flux reconstruction (FR) method \cite{Huynh_2007,Huynh_2014} are two of the most popular choices in the community of computational fluid dynamics (CFD).
 %
 Besides the inherent compactness, these schemes are much easier to implement $p$-refinement than their finite difference and finite volume counterparts.
 %
-However, like other high-order schemes, numerical oscillations would appear near discontinuities or large gradients in the solution given by a DG or FR scheme, if no shock capturing mechanism were incorporated into it.
+However, like other high-order schemes, numerical oscillations would appear near discontinuities or large gradients in the solution given by a DG or FR scheme, if no shock fitting or shock capturing mechanism were incorporated into it.
+%
+
+%
+Various shock capturing techniques, such as limiters \cite{Zhong_2013,Zhu_2013,Zhu_2020,Zhu_2023,Li_2020}, filters \cite{Dzanic_2022} and artificial viscosities \cite{Persson_2006,Klockner_2011,Discacciati_2020}, have been developed for DG and FR schemes in the past two decades.
+%
+However, most of these methods are based on orthogonal (modal) expansions, which are less efficient than pure Lagrange (nodal) expansions.
+%
+Some of them are even built upon extrapolations, i.e. evaluating an approximating polynomial outside the element it belongs to, which impairs the compactness of DG and FR schemes.
+%
+
 %
 In this paper, a novel artificial viscosity based on an energy measure of oscillation and its damping rate on a DG or FR element is developed.
 %
