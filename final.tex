@@ -174,8 +174,75 @@ $$
 %
 In general, the dimension of a nodal basis is much larger than that of the modal basis with the same $(P,D)$.
 
-\subsection{ODE Systems from the DG and FR Methods}
+\subsection{Semi-discretized Systems from DG and FR}
 An ordinary differential equation (ODE) system can then be derived from either the DG method or the FR method.
+%
+
+%
+The DG method requires the conservation law to be satisfied in a weaker sense
+$$
+\int_{E_j}\phi_n\pdv{u}{t}
+=\int_{E_j}\vec{f}\vdot\grad\phi_n
+-\oint_{\partial E_j}\vec{\nu}\vdot\vec{f}\,\phi_n,\quad \forall n\in\{1,\dots,N\},
+$$
+in which the surface integral comes from integration-by-part.
+%
+The solution $u$ and the flux $\vec{f}$ in the volume integrals should be replaces by one of the polynomial expansion discussed in the previous section,
+while the normal component of the flux in the surface integral should be replaced by a common flux function $f^{I}$.
+%
+This procedure could also be applied to the conservation law in parametric coordinates, which gives
+$$
+\int_{\mathcal{E}_j}\phi_{n}\pdv{U_j^{h}}{t}=\int_{\mathcal{E}_j}\vec{F}_j^{D}\vdot\grad\phi_{n}-\oint_{\partial\mathcal{E}_j}F^{I}\,\phi_{n},\quad\forall n\in\{1,\dots,N\},
+$$
+where $\mathcal{E}_j$ represents the \emph{standard} element defined in the parametric space.
+%
+The superscript $D$ in $\vec{F}_j^{D}$ emphasizes that the approximated flux are discontinuous on element interfaces.
+%
+Either of the two weak forms gives a semi-discretized ordinary differential equation (ODE) system.
+
+%
+The FR method, on the other hand, gives the ODE system by first introducing a $(P+1)$-degree correction function to the discontinuities flux $\vec{F}_j^{D}$, which then becomes $C_0$ continuous on element interfaces.
+%
+For one-dimensional problems, the correction procedure is given by
+$$
+F_j^{R}(\xi)=F_j^{D}(\xi) + \qty[F^{I}-F_j^{D}]_{\xi=-1} g_{-1}(\xi) + \qty[F^{I}-F_j^{D}]_{\xi=+1} g_{+1}(\xi),
+$$
+where the $(P+1)$-degree $g$'s must satisfy
+$$
+g_{+1}(+1)=1,\quad
+g_{+1}(-1)=0,\quad
+g_{-1}(-\xi)=g_{+1}(+\xi), forall \xi\in[-1,1],
+$$
+and approximate $0(\xi)$ in some appropriate sense.
+Possible choices of $g$ are plotted in Figure \ref{fr:lumping}.
+%
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.8\textwidth]{./fr/HuynhLumping.pdf}
+  \caption{Candidates of the correction function $g_{+1}$.}
+  \label{fr:lumping}
+\end{figure}
+%
+The effect of the correction procedure is demonstrated in Figure \ref{fr:compare}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.8\textwidth]{./fr/FRonLegendreRoots.pdf}
+  \caption{Discontinuous flux v. reconstructed continuous flux.}
+  \label{fr:compare}
+\end{figure}
+
+%
+By forcing the conservation law to be satisfied on all solution points, and replace $U$ and $F$ by $U_j^h$ and $F_j^{R}$:
+$$
+\dv{\hat{U}_{j,n}(t)}{t}+\pdv{F_j^{R}(U^{h}(\xi_{n},t))}{\xi}=0,\quad\forall n\in\left\{ 1,\dots,N\right\}.
+$$
+%
+For two-dimensional problems, if the element $E_j$ is a quadrangle, the correction procedure could be applied in a dimension-by-dimension way, which gives
+$$
+\begin{aligned}\dv{\hat{U}_{j,m,n}}{t} & =\frac{\partial F_{j}^{\xi,D}(\xi_{m},\eta_{n})}{\partial\xi}+\sum_{a=\pm1}\left[F^{I}-F_{j}^{\xi,D}\right]_{\xi=a,\eta_{n}}\dv{g_{a}(\xi_{m})}{\xi}\\
+ & +\frac{\partial F_{j}^{\eta,D}(\xi_{m},\eta_{n})}{\partial\eta}+\sum_{b=\pm1}\left[F^{I}-F_{j}^{\eta,D}\right]_{\xi_{m},\eta=b}\dv{g_{b}(\eta_{n})}{\eta},
+\end{aligned}
+$$
 
 \subsection{Direct Viscous Fluxes on Element Interfaces}
 Once an element-wise polynomial approximation is applied to the solution $u$, the flux $f(u,\grad u)$ is generally discontinuous on the interfaces of adjacent elements.
