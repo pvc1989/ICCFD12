@@ -100,20 +100,83 @@ The damping rate of this energy on an element can be derived under the assumptio
 %
 The value of viscosity for suppressing numerical oscillations is obtained by taking the ratio of the oscillation energy with respect to the product of its damping rate and prescribed time step.
 %
-Such element-wise constant viscosity distribution is reconstructed to be $C_0$ continuous on element interfaces.
+Such element-wise constant viscosity distribution could optionally be reconstructed to be $C_0$ continuous on element interfaces.
 
 \section{Methodology}
-\subsection{DG and FR Schemes}
-To obtain an element-wise $p$-degree polynomial approximation of the solution of the one-dimensional conservation law,
+\subsection{Element-wise Polynomial Approximations}
+To solve the two-dimensional conservation law
 $$
-\pdv{u}{t}+\pdv{f(u)}{x}=0,
+\partial_{t}\,u+\partial_{\vec{r}}\vdot\vec{f}=0,\quad\partial_{\vec{r}}\vdot\vec{f}=\partial_{x}\,f^{x}+\partial_{y}\,f^{y},
 $$
-one may first introduce a Lagrange interpolation for both $u$ and $f$ on the $j$th element:
+using a DG or FR scheme, one may first introduce a map from the physical coordinates to the parametric coordinates on each element:
 $$
-u^h_j(x,t) = \sum_{k=0}^{p} L_{j,k}(x)\,\hat{u}_{j,k}(t),\quad
-f^h_j(x,t) = \sum_{k=0}^{p} L_{j,k}(x)\,f(\hat{u}_{j,k}(t)),
+\underbrace{(x,y)}_{\vec{r}}\mapsto\underbrace{(\xi,\eta)}_{\vec{\rho}}
+\implies
+\begin{bmatrix}\partial_{\xi}\,\phi\\
+\partial_{\eta}\,\phi
+\end{bmatrix}=\underbrace{\begin{bmatrix}\partial_{\xi}\,x & \partial_{\xi}\,y\\
+\partial_{\eta}\,x & \partial_{\eta}\,y
+\end{bmatrix}}_{\underline{J}}\begin{bmatrix}\partial_{x}\,\phi\\
+\partial_{y}\,\phi
+\end{bmatrix}=\begin{bmatrix}\partial_{\xi}\,\vec{r}\\
+\partial_{\eta}\,\vec{r}
+\end{bmatrix}\vdot\partial_{\vec{r}}\,\phi,
 $$
-in which $L_{j,k}$ is the Lagrange basis associated with the $k$th node (a.k.a. solution point) on the $j$th element, and $\hat{u}_{j,k}$ is the value of the approximate solution $u^h$ on that node.
+in which $\underline{J}$ is the Jacobian matrix of the coordinate map.
+%
+The conservation law in physical coordinates is then (optionally) transformed into the form in parametric coordinates:
+$$
+\partial_{t}\,U+\partial_{\vec{\rho}}\vdot\vec{F}=0,\quad\partial_{\vec{\rho}}\vdot\vec{F}=\partial_{\xi}\,F^{\xi}+\partial_{\eta}\,F^{\eta},
+$$
+in which
+$$
+U=u\,\underbrace{\det(\underline{J})}_{J},\quad\begin{bmatrix}F^{\xi}\\
+F^{\eta}
+\end{bmatrix}=J\,\underbrace{\begin{bmatrix}\partial_{x}\,\xi & \partial_{y}\,\xi\\
+\partial_{x}\,\eta & \partial_{y}\,\eta
+\end{bmatrix}}_{\underline{J}^{-1}}\begin{bmatrix}f^{x}\\
+f^{y}
+\end{bmatrix}=J\begin{bmatrix}\partial_{\vec{r}}\,\xi\\
+\partial_{\vec{r}}\,\eta
+\end{bmatrix}\vdot\vec{f}.
+$$
+
+To obtain an element-wise polynomial approximation of the solution, an orthonormal (modal) expansion or a Lagrange interpolation has to be introduced for $u$ or $U\equiv Ju$ on the $j$th element:
+$$
+u(\vec{r},t)\approx u_{j}^{h}(\vec{r},t)=\begin{cases}
+\sum_{n=1}^{N}\hat{u}_{j,n}(t)\,\phi_{j,n}(\vec{\rho}), & \text{Lagrange interpolation},\\
+\sum_{m=1}^{M}\tilde{u}_{j,m}(t)\,\psi_{j,m}(\vec{r}), & \text{orthonormal expansion},
+\end{cases}
+$$
+in which $\phi_{j,n}$ is the Lagrange basis associated with the $n$th node (a.k.a. solution point) on the $j$th element, which satisfies the Kronecker delta property
+$$
+\phi_{j,m}(\vec{\rho}_{j,n})=\delta_{mn},\quad\forall (m,n)\in\{1,\dots,N\}^2,
+$$
+while $\psi_{j,m}$ is the $m$th orthonormal basis on the $j$th element, which satisfies the innerproduct delta property
+$$
+\langle\psi_{j,m}\vert\psi_{j,n}\rangle=\delta_{mn},\quad\forall (m,n)\in\{1,\dots,M\}^2.
+$$
+%
+The coefficient $\hat{u}_{j,n}$ is the nodal value of the approximate solution, i.e. $\hat{u}_{j,n}=u_j^h(\vec{r}(\vec{\rho}_n), t)$,
+while the coefficient $\tilde{u}_{j,m}$ is the projection of the approximate solution on the $m$th basis, i.e. $\tilde{u}_{j,m}=\ip{u_j^h}{\psi_{j,m}}$
+
+The number of terms $N$ or $M$ in the summations, i.e. the dimension of the polynomial space, depends on the degree of solution $P$ and the dimension of physical space $D$.
+%
+For tensor-product elements, e.g. quadrangles, hexahedra, the dimension of a Lagrange basis is equal to the product of the number of solution points in each dimension, which leads to
+$$
+N(P,D)=(P+1)^D,
+$$
+%
+For building the orthonormal basis (in physical coordinates), one usually apply the Gram--Schmidt process to the basis formed by monomials whose degrees are less than or equal to $P$, which leads to
+$$
+M(P,D)=\binom{P+D}{D}.
+$$
+%
+In general, the dimension of a nodal basis is much larger than that of the modal basis with the same $(P,D)$.
+
+\subsection{Fluxes on Element Interfaces}
+
+\subsection{ODE Systems from the DG and FR Methods}
 An ordinary differential equation (ODE) system can then be derived from either the DG method or the FR method.
 
 \subsection{Oscillation Energy}
