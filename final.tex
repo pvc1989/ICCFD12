@@ -1,4 +1,4 @@
-\documentclass[10pt,draft]{article}
+\documentclass[10pt]{article}
 \usepackage[a4paper,left=2.54cm,top=2.54cm,right=2.54cm,bottom=2.54cm]{geometry}
 \usepackage{fancyhdr}
 \setlength{\headsep}{1.cm} % Adjust the space after the header
@@ -84,7 +84,7 @@ However, like other high-order schemes, numerical oscillations would appear near
 %
 
 %
-Various shock capturing techniques, such as limiters \cite{Zhong_2013,Zhu_2013,Zhu_2020,Zhu_2023,Li_2020}, filters \cite{Dzanic_2022} and artificial viscosities \cite{Persson_2006,Klockner_2011,Discacciati_2020}, have been developed for DG and FR schemes in the past two decades.
+Various shock capturing techniques, such as limiters \cite{Zhong_2013,Zhu_2013,Zhu_2020,Zhu_2023,Li_2020}, filters \cite{Panourgias_2016,Dzanic_2022} and artificial viscosities \cite{Persson_2006,Klockner_2011,Discacciati_2020}, have been developed for DG and FR schemes in the past two decades.
 %
 However, most of these methods are based on orthogonal (modal) expansions, which are less efficient than pure Lagrange (nodal) expansions.
 %
@@ -392,7 +392,7 @@ $$
 $$
 
 \subsection{Oscillation Energy}
-One last question in the current method is how to evaluate $\Delta K_j$, which quantitatively measures the numerical oscillation on $E_j$.
+The last question in the current method is how to evaluate $\Delta K_j$, which quantitatively measures the numerical oscillation on $E_j$.
 %
 
 %
@@ -439,9 +439,14 @@ Further tests on more challenging problems are still in progress.
 
 \section{Results}
 In this section, the effectiveness of the artificial viscosity proposed in the previous section is demonstrated by some standard test cases.
-The computational domain is divided into $100$ elements uniformly.
-A fifth-order ($p=4$) FR scheme using the $g_2$ correction function, which is equivalent to a DG SEM scheme of the same order of accuracy, is used for spatial discretization.
-The resulting ODE system is solved by an explicit three-stage third-order strong stability preserving Runge--Kutta method.
+%
+For one-dimensional problems, the computational domain is divided into $100$ elements uniformly.
+%
+
+%
+A fifth-order ($P=4$) FR scheme using the $g_2$ correction function from \cite{Huynh_2007}, which is equivalent to a DG SEM scheme of the same order of accuracy, is used for spatial discretization.
+%
+The resulting ODE system is solved by an explicit three-stage third-order strong stability preserving Runge--Kutta method \cite{Gottlieb_2001}.
 
 \subsection{Shock Tube Problems}
 Riemann problems, as well as their exact and approximate solvers, play a pivot role in the development of CFD schemes \cite{Toro_2009}.
@@ -463,10 +468,11 @@ and the Lax problem in with the initial condition
 \mqty[0.5 & 0 & 0.571], &x>0,\\
 \end{cases}
 \end{equation}
-are two of the most famous ones that are frequently used for testing shock capturing mechanisms.
+are two of the most famous ones that are frequently used for testing shock capturing techniques.
 
-Figure \ref{fig:sod} and \ref{fig:lax} gives the solution (the "Actual" curves) of these two problems at the moment ($t=0.5$ for Sod, $t=0.3$ for Lax) and the viscosity distributions for each characteristic variables at all time steps.
-The "Expect" curves in these figures are the exact solutions obtained from analytical procedures.
+Figure \ref{fig:sod} and \ref{fig:lax} gives the solution (the \emph{Actual} curves) of these two problems at the moment ($t=0.5$ for Sod, $t=0.3$ for Lax) and the viscosity distributions for each characteristic variables at all time steps.
+%
+The \emph{Expect} curves in these figures are the exact solutions obtained from analytical procedures.
 \begin{figure}[H]
   \centering
   \includegraphics[width=.49\textwidth]{./sod/Frame100.pdf}
@@ -508,7 +514,8 @@ The \emph{Expect} curve in this figure is the approximate solution given by the 
   \label{fig:shu_osher}
 \end{figure}
 
-These standard cases for testing shock capturing schemes show that the proposed mechanism is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaining the high-order accuracy of the DG or FR solution.
+\section{Conclusions}
+The standard cases for testing shock capturing methods show that the proposed artificial viscosity is sufficiently large for suppressing numerical oscillations near physical discontinuities, such as shocks and contacts, while keeps negligible in other regions for maintaining the high-order accuracy of the DG or FR solution.
 
 %%%% BIBLIOGRAPHY
 \bibspacing=\dimen 100
