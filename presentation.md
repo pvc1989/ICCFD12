@@ -106,7 +106,7 @@ The original flux (disconstinuous on element interfaces) is reconstructed to be 
 Common fluxes on element interfaces:
 
 - Convection: exact or approximate Riemann solvers.
-- Diffusion: BR1/BR2, local DG, *direction DG*, ...
+- Diffusion: BR1/BR2, local DG, ***direction DG***, ...
 
 In this work, we use the last one (DDG):
 $$
@@ -190,13 +190,101 @@ $$
 
 should also be cached.
 
-### 2.2. Artificial viscosity based on energy dissipation
+## 2.2. Artificial viscosity based on energy dissipation
 
 ### 2.2.1. Quasi-linear artificial viscosity
 
+Take the scalar case in 1d space as an example:
+
+$$
+\pdv{u}{t}+\pdv{f(u)}{x}=\pdv{x}\qty({\color{red}\nu(u)}\pdv{u}{x}),\quad \nu(u) \ge 0.
+$$
+
+Generalizing to systems:
+
+- For a one-dimensional system, the procedure could be applied to either each conservative variable or each characteristic variable.
+
+- For a multi-dimensional problem, we just apply the proposed procedure to each conservative variable, i.e.
+
+$$
+\pdv{t}\mqty[u_1\\ \vdots \\ u_K]+\grad\vdot\mqty[\vb*{f}_1\\ \vdots \\ \vb*{f}_K]
+=\grad\vdot\mqty[{\color{red}\nu_1}\grad{u}_1\\ \vdots \\ {\color{red}\nu_K}\grad{u}_K],
+$$
+
+Assume the viscosity value is a constant across the entire domain.
+
+The semi-discretized ODE system can be written as
+
+$$
+\dv{t}\ket{\hat{u}_{j}}=(\text{inviscid terms})+\nu\left(\underline{D}_{j}\ket{\hat{u}_{j}}+\underline{E}_{j}\ket{\hat{u}_{j-1}}+\underline{F}_{j}\ket{\hat{u}_{j+1}}\right),
+$$
+
+Without loss of generality, we hereforth only consider the nodal interpolation in which solution points are also Gaussian quadrature points.
+
 ### 2.2.2. Dissipation rate of kinetic energy
 
+One may now define the ***kinetic energy*** on $E_j$ to be
+
+$$
+K_{j}\equiv\int_{E_{j}}\frac{1}{2}\qty(u_{j}^{h})^{2}\approx\frac{1}{2}\sum_{n=1}^{N}w_{j,n}\,\hat{u}_{j,n}\,\hat{u}_{j,n}=\frac{1}{2}\underbrace{\begin{bmatrix}\hat{u}_{j,1} & \cdots & \hat{u}_{j,N}\end{bmatrix}}_{\bra{\hat{u}_{j}}}\underbrace{\begin{bmatrix}w_{j,1}\\
+ & \ddots\\
+ &  & w_{j,N}
+\end{bmatrix}}_{\underline{W}_{j}}\underbrace{\begin{bmatrix}\hat{u}_{j,1}\\
+\vdots\\
+\hat{u}_{j,N}
+\end{bmatrix}}_{\ket{\hat{u}_{j}}},
+$$
+
+The ***dissipation rate*** of $K_j$ can easily be derived, which is
+
+$$
+\dv{K_j}{t}=\bra{\hat{u}_{j}}\underline{W}_{j}\dv{t}\ket{\hat{u}_{j}}=(\text{inviscid terms})+\nu\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{j}\ket{\hat{u}_{j}}+(\text{inter-cell viscous terms}),
+$$
+
+By ignoring the inviscid terms and inter-cell viscous terms, one gets
+
+$$
+\nu_{j}=\frac{\Delta K_{j}}{-G_{j}\,\tau}
+\impliedby\dv{t}K_{j}=(\text{inviscid terms})+\nu\underbrace{\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{j}\ket{\hat{u}_{j}}}_{G_{j}}+(\text{inter-cell viscous terms}),
+$$
+
 ### 2.2.3. Oscillation energy estimations
+
+The last question is how to evaluate the ***oscillation energy*** $\Delta K_j$, which quantitatively measures the numerical oscillation on $E_j$.
+
+In one-dimensional cases, we define it to be
+
+$$
+\Delta K_j = \int_{x_{j-1/2}}^{x_{j}}\left(u_{j}^{h}-u_{j-1}^{h}\right)^{2}\dd{x}+\int_{x_{j}}^{x_{j+1/2}}\left(u_{j}^{h}-u_{j+1}^{h}\right)^{2}\dd{x},
+$$
+
+which is the square of the $L_2$-norm of difference between the solution on $E_j$ and those on its immediate neighbors.
+
+The integrals are as cheap as weighted summations of nodal values if solution points are also Gaussian quadrature points.
+
+The extrapolations are also cheap, since the coordinate map in this case is usually linear and therefore trivial.
+
+However, when it is generalized to *multi-dimensional* cases, extrapolations using nodal expansions in parametric coordinates are generally expensive, since it incurs solving a non-linear algebraic equation
+
+$$
+\mqty[x \\ y]_\text{query} = \mqty[x^h(\xi, \eta) \\ y^h(\xi, \eta)],
+$$
+for the value of $(\xi,\eta)$ from the given $(x,y)$ on a neighboring cell.
+
+Even worse, the solution of this equation might not exist, even for a 4-node quadrangular element:
+
+![](./coordmap.svg)
+
+It is an open problem to design an oscillation measure requiring no extrapolations.
+
+In the current work, we tried the following surface integral of value jumps
+
+$$
+\oint_{\partial E_j} \qty(u^h_{j}-u^h_{j'})^2,\quad
+j'\in\text{ neighbors of } E_j,
+$$
+
+Further tests on more challenging problems are still in progress.
 
 # Results
 
