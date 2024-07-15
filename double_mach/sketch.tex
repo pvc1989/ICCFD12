@@ -1,0 +1,30 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{angles, calc, positioning, patterns.meta}
+
+\begin{document}
+
+\begin{tikzpicture}[scale=3, rotate=30]
+% axes
+\draw[->] (4,0) -- +(0.2,0) node[below] {$x$};
+\draw[->] (0,1) -- +(0,.2) node[above] {$y$};
+% ticks
+\foreach \i in {0,...,4}
+  \draw (\i,0) -- +(0,-.05) node[below] {$\i$};
+\foreach \i in {0,1}
+  \draw (0,\i) -- +(-.04,0) node[left] {$\i$};
+% lines and nodes
+\draw[ultra thick, red!80!black] (0.25,0) coordinate (x0) -- +(60:3) coordinate (us);
+\draw[ultra thick, red!80!black] (x0) -- +(-120:0.5) coordinate (ut);
+\draw[dashed] (0,0) rectangle (4,1);
+\path (us) -- (x0 -| us) coordinate (xs);
+\draw[->] (us) -- +(-30:.3) node[right] {$u_\perp=8.25$};
+\draw[->] (ut) -- +(-30:.3) node[right] {$u_\perp=8.25$};
+\draw[thick] (4,0) -- (x0) -- +(-60:.5) coordinate (xt);
+\path node[left] at (x0) {$x_0$};
+% angle
+\draw pic[draw,pic text=$60\deg$, angle eccentricity=1.8, angle radius=.6cm] {angle=xs--x0--us};
+\draw pic[draw,pic text=$60\deg$, angle eccentricity=2.0, angle radius=.6cm] {angle=xt--x0--xs};
+\end{tikzpicture}
+
+\end{document}
