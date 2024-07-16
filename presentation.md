@@ -101,6 +101,10 @@ The original flux (disconstinuous on element interfaces) is reconstructed to be 
 
 ![](./fr/FRonLegendreRoots.svg)
 
+Some choices of $g$ lead to the equivalent DG schemes:
+
+![](./fr/equivalence.svg)
+
 ### 2.1.3. Direct viscous fluxes on element interfaces
 
 Common fluxes on element interfaces:
@@ -319,6 +323,25 @@ Two shocks interfere with each other:
 | $$h=0.05$$ | ![](./riemann2d/h=5e-2_p=2/animation.gif) | ![](./riemann2d/h=5e-2_p=3/animation.gif) |
 | $$h=0.01$$ | ![](./riemann2d/h=1e-2_p=2/animation.gif) | ![](./riemann2d/h=1e-2_p=3/animation.gif) |
 
+### 3.2.2. The Double Mach Reflection problem
+
+Proposed by [Woodward (1984)](https://doi.org/10.1016/0021-9991(84)90142-6)
+
+![](./double_mach/sketch.svg)
+
+$$h\approx 0.02$$, $$P=2$$ with a (simple) WENO limiter:
+
+![](./double_mach/h=2e-2/p=2_limiter_rho.png)
+
+$$h\approx 0.05$$ by the proposed artificial viscosity:
+
+| $$P$$ | Value | $$t=0.8$$ |
+| :---: | :------------: | :--------: |
+| 2 | $$\rho(t=0.25)$$ | ![](./double_mach/h=5e-2/p=2_viscosity_rho.png) |
+| 3 | $$\rho(t=0.25)$$ | ![](./double_mach/h=5e-2/p=3_viscosity_rho.png) |
+| 3 | $$\nu$$ for $$\rho(t=0.25)$$ | ![](./double_mach/h=5e-2/p=3_viscosity_nu_rho.png) |
+| 3 | $$\nu$$ for $$\rho v(t=0.25)$$ | ![](./double_mach/h=5e-2/p=3_viscosity_nu_rho_v.png) |
+| 3 | $$\rho v(t=0.25)$$ | ![](./double_mach/h=5e-2/p=3_viscosity_rho_v.png) |
 
 # Conclusions
 
