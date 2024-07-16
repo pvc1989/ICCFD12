@@ -285,38 +285,40 @@ j'\in\text{ neighbors of } E_j,
 $$
 
 Further tests on more challenging problems are still in progress.
+## 3.2. Multi-dimensional problems
 
-# Results
+### 3.2.0. Sod's shock tube problem in 3d
 
-1. aaaa
-2. bbbb
-3. ...
+|             |                $$P=2$$                |                $$P=3$$                |
+| :---------: | :-----------------------------------: | :-----------------------------------: |
+| $$N_x=25$$  | ![](./sod3d/h=2e-1_p=2/animation.gif) | ![](./sod3d/h=2e-1_p=3/animation.gif) |
+| $$N_x=100$$ | ![](./sod3d/h=5e-2_p=2/animation.gif) | ![](./sod3d/h=5e-2_p=3/animation.gif) |
+
+### 3.2.1. A Two-dimensional Riemann problem
+
+[Lax (1997)](https://doi.org/10.1137/s1064827595291819) defines dozens of 2D Riemann problems.
+
+The one we solve is
+
+$$
+\begin{bmatrix}\rho & u & v & p\end{bmatrix}=\begin{cases}
+\begin{bmatrix}1.5 & 0 & 0 & 1.5\end{bmatrix}, & (x,y)\in(0.8,1)\times(0.8,1),\\
+\begin{bmatrix}0.5323 & 1.206 & 0 & 0.3\end{bmatrix}, & (x,y)\in(0,0.8)\times(0.8,1),\\
+\begin{bmatrix}0.138 & 1.206 & 1.206 & 0.029\end{bmatrix}, & (x,y)\in(0,0.8)\times(0,0.8),\\
+\begin{bmatrix}0.5323 & 0 & 1.206 & 0.3\end{bmatrix}, & (x,y)\in(0.8,1)\times(0,0.8),
+\end{cases}
+$$
+
+Two shocks interfere with each other:
+- one runs to the left
+- the other runs to the bottom
 
 
+|  | $$P=2$$ | $$P=3$$ |
+| :------------: | :--------: | :--------: |
+| $$h=0.05$$ | ![](./riemann2d/h=5e-2_p=2/animation.gif) | ![](./riemann2d/h=5e-2_p=3/animation.gif) |
+| $$h=0.01$$ | ![](./riemann2d/h=1e-2_p=2/animation.gif) | ![](./riemann2d/h=1e-2_p=3/animation.gif) |
 
-## Test Table
-
-| sod                  | Lax                  |
-| -- | -- |
-| hhhh | mmmm |
-
-
-
-| sod                  | Lax                  |
-| -- | -- |
-| ![](./animation.gif) | ![](./animation.gif) |
-
-
-
-## Test Figure
-
-<img src="./animation.gif" style="zoom:50%;" />
-
-
-
-### Riemann
-
-<img src="./assets/riemann.png" style="max-width:1080; max-height:200;"/>
 
 # Conclusions
 
