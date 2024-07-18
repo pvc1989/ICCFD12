@@ -1,15 +1,58 @@
-<!-- 
-layout: home
+---
+layout: page
 title: ICCFD12
- -->
+---
+
+<div class="center">
+  <h1>A Novel Energy-based Artificial Viscosity for Suppressing Numerical Oscillations in Discontinuous Galerkin and Flux Reconstruction Schemes</h1>
+  <h2>Weicheng Pei and Yu-Xin Ren</h2>
+  <h3>Institute of Fluid Mechanics, Tsinghua University</h3>
+</div>
 
 # 1. Introduction
 
 ## 1.1. High-order schemes for unstructured grids
 
+- FV (finite volume)
+  - (compact) least squares
+  - variational reconstruction
+- DG (discontinuous Galerkin)
+  - modal vs. nodal
+  - Legendre vs. Lobatto
+- FR (flux reconstruction)
+
 ## 1.2. Shock capturing techniques for DG and FR
 
-## 1.3. Outline of the proposed artificial viscosity
+- Limiter
+  - *simple compact WENO* by [Zhong (2013)](https://doi.org/10.1016/j.jcp.2012.08.028), [Zhu (2013)](https://doi.org/10.1016/j.jcp.2013.04.012)
+  - *$$p$$-weighted* by [Li (2020)](https://doi.org/10.1016/j.jcp.2020.109246)
+  - *multi-resolution WENO* by [Zhu (2023)](https://doi.org/10.1007/s42967-023-00272-y)
+- Filter
+  - *entropy-based* by [Dzanic (2022)](https://doi.org/10.1016/j.jcp.2022.111501)
+- Artificial Viscosity
+  - *decay-rate-based* by [Persson (2006)](https://doi.org/10.2514/6.2006-112)
+    - improved by [Klöckner (2011)](https://doi.org/10.1051/mmnp/20116303)
+
+## 1.3. Key points of the proposed artificial viscosity
+
+### Targets
+
+- For both DG and FR schemes.
+- For both modal and nodal versions.
+- No modal proxy and extrapolation for nodal versions.
+- Easy for implementation and vectorization.
+
+### Procedures
+
+1. Add a quasi***linear*** viscous term, and choose a ***linear*** scheme for viscous flux.
+1. Derive the semi-discretized ODE system, which is *linear* in viscosity.
+1. Factor out the ***dissipation matrix***, which is constant for static elements.
+1. Precompute and cache the *dissipation matrix* for each element.
+1. At the beginning of each time step:
+   1. Compute the energy ***dissipation rate*** for each element.
+   1. Evaluate the ***oscillation energy*** for each element.
+   1. Get the artificial viscosity from the ratio of them (for each component).
+   1. Reconstruct the viscosity distribution (optional).
 
 # 2. Methods
 
@@ -18,6 +61,7 @@ title: ICCFD12
 ### 2.1.1. Element-wise polynomial approximations
 
 To solve a 2d conservation law (system)
+
 $$
 \partial_{t}\,u+\partial_{\vec{r}}\vdot\vec{f}=0,\quad\partial_{\vec{r}}\vdot\vec{f}=\partial_{x}\,f^{x}+\partial_{y}\,f^{y},
 $$
@@ -67,7 +111,7 @@ A DG scheme might be formulated either in physical coordinates
 
 $$
 \int_{E_j}\phi_n\pdv{u_j^h}{t}
-=\int_{E_j}\vec{f_j}^\mathrm{D}\vdot\grad\phi_n
+=\int_{E_j}\vec{f}_j^D\vdot\grad\phi_n
 -\oint_{\partial E_j}f^{I}\,\phi_n,\quad \forall n\in\{1,\dots,N\},
 $$
 
@@ -110,9 +154,10 @@ Some choices of $g$ lead to the equivalent DG schemes:
 Common fluxes on element interfaces:
 
 - Convection: exact or approximate Riemann solvers.
-- Diffusion: BR1/BR2, local DG, ***direction DG***, ...
+- Diffusion: BR1/BR2, LDG (local DG), ***DDG (direction DG)***, ...
 
 In this work, we use the last one (DDG):
+
 $$
 \begin{bmatrix}\partial_{x}\,u\\
 \partial_{y}\,u
@@ -126,6 +171,8 @@ n_x\,\partial^2_{xx}\,u + n_y\,\partial^2_{xy}\,u\\
 n_x\,\partial^2_{yx}\,u + n_y\,\partial^2_{yy}\,u
 \end{bmatrix}_{\mathrm{R}-\mathrm{L}},
 $$
+
+⚠️ Physical derivatives from interpolations in parametric coordinates might be costly and error-prone.
 
 If, the interpolation is applied to $u$, the second-order derivatives are
 
@@ -204,23 +251,23 @@ $$
 \pdv{u}{t}+\pdv{f(u)}{x}=\pdv{x}\qty({\color{red}\nu(u)}\pdv{u}{x}),\quad \nu(u) \ge 0.
 $$
 
-Generalizing to systems:
-
-- For a one-dimensional system, the procedure could be applied to either each conservative variable or each characteristic variable.
-
-- For a multi-dimensional problem, we just apply the proposed procedure to each conservative variable, i.e.
-
-$$
-\pdv{t}\mqty[u_1\\ \vdots \\ u_K]+\grad\vdot\mqty[\vb*{f}_1\\ \vdots \\ \vb*{f}_K]
-=\grad\vdot\mqty[{\color{red}\nu_1}\grad{u}_1\\ \vdots \\ {\color{red}\nu_K}\grad{u}_K],
-$$
-
-Assume the viscosity value is a constant across the entire domain.
+> Generalizing to systems:
+>
+> - For a one-dimensional system, the procedure could be applied to either each conservative variable or each characteristic variable.
+>
+> - For a multi-dimensional problem, we just apply the proposed procedure to each conservative variable, i.e.
+>
+> $$
+> \pdv{t}\mqty[u_1\\ \vdots \\ u_K]+\grad\vdot\mqty[\vb*{f}_1\\ \vdots \\ \vb*{f}_K]
+> =\grad\vdot\mqty[{\color{red}\nu_1(u)}\grad{u}_1\\ \vdots \\ {\color{red}\nu_K(u)}\grad{u}_K],
+> $$
+>
+> Assume the viscosity value is a constant across the entire domain.
 
 The semi-discretized ODE system can be written as
 
 $$
-\dv{t}\ket{\hat{u}_{j}}=(\text{inviscid terms})+\nu\left(\underline{D}_{j}\ket{\hat{u}_{j}}+\underline{E}_{j}\ket{\hat{u}_{j-1}}+\underline{F}_{j}\ket{\hat{u}_{j+1}}\right),
+\dv{t}\ket{\hat{u}_{j}}=(\text{inviscid terms})+\nu\left(\underline{D}_{jj}\ket{\hat{u}_{j}}+\sum_{j'}\underline{D}_{jj'}\ket{\hat{u}_{j'}}\right),
 $$
 
 Without loss of generality, we hereforth only consider the nodal interpolation in which solution points are also Gaussian quadrature points.
@@ -230,26 +277,89 @@ Without loss of generality, we hereforth only consider the nodal interpolation i
 One may now define the ***kinetic energy*** on $E_j$ to be
 
 $$
-K_{j}\equiv\int_{E_{j}}\frac{1}{2}\qty(u_{j}^{h})^{2}\approx\frac{1}{2}\sum_{n=1}^{N}w_{j,n}\,\hat{u}_{j,n}\,\hat{u}_{j,n}=\frac{1}{2}\underbrace{\begin{bmatrix}\hat{u}_{j,1} & \cdots & \hat{u}_{j,N}\end{bmatrix}}_{\bra{\hat{u}_{j}}}\underbrace{\begin{bmatrix}w_{j,1}\\
+\begin{aligned}
+K_{j}\coloneqq\int_{E_{j}}\frac{1}{2}\qty(u_{j}^{h})^{2}
+&\approx\frac{1}{2}\sum_{n=1}^{N}w_{j,n}\,\hat{u}_{j,n}\,\hat{u}_{j,n}
+\\
+&=\frac{1}{2}\underbrace{\begin{bmatrix}\hat{u}_{j,1} & \cdots & \hat{u}_{j,N}\end{bmatrix}}_{\bra{\hat{u}_{j}}}\underbrace{\begin{bmatrix}w_{j,1}\\
  & \ddots\\
  &  & w_{j,N}
 \end{bmatrix}}_{\underline{W}_{j}}\underbrace{\begin{bmatrix}\hat{u}_{j,1}\\
 \vdots\\
 \hat{u}_{j,N}
 \end{bmatrix}}_{\ket{\hat{u}_{j}}},
+\end{aligned}
 $$
 
 The ***dissipation rate*** of $K_j$ can easily be derived, which is
 
 $$
-\dv{K_j}{t}=\bra{\hat{u}_{j}}\underline{W}_{j}\dv{t}\ket{\hat{u}_{j}}=(\text{inviscid terms})+\nu\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{j}\ket{\hat{u}_{j}}+(\text{inter-cell viscous terms}),
+\begin{aligned}
+\dv{K_j}{t}
+&=\bra{\hat{u}_{j}}\underline{W}_{j}\dv{t}\ket{\hat{u}_{j}}
+\\
+&=(\text{inviscid terms})+\nu\,\underbrace{\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{jj}\ket{\hat{u}_{j}}}_{G_j}+(\text{inter-cell viscous terms}),
+\end{aligned}
 $$
 
 By ignoring the inviscid terms and inter-cell viscous terms, one gets
 
 $$
-\nu_{j}=\frac{\Delta K_{j}}{-G_{j}\,\tau}
-\impliedby\dv{t}K_{j}=(\text{inviscid terms})+\nu\underbrace{\bra{\hat{u}_{j}}\underline{W}_{j}\,\underline{D}_{j}\ket{\hat{u}_{j}}}_{G_{j}}+(\text{inter-cell viscous terms}),
+\nu_{j}=\frac{\Delta K_{j}}{-G_{j}\,\tau_j}
+\impliedby\dv{t}K_{j}=\cdots+\nu\,G_{j}+\cdots,
+$$
+
+in which
+
+$$
+\tau_j = C \frac{h_j}{\lambda_\max},
+$$
+
+$$C$$ is the only tuneable parameter.
+
+⚠️ To avoid extremely large viscosity:
+
+$$
+\nu_{j}=\min\qty(\frac{-\Delta K_{j}}{G_{j}\cdot\tau_j},\lambda_\max\frac{h_j}{P}),
+$$
+
+⚠️ To avoid 0-in-divisor:
+
+
+![](./sod3d/old/Frame50.png)
+
+$$
+u^h_j\in \mathbb{P}_{P}(E_j),\quad \forall j,
+$$
+
+$$
+\implies
+\abs{u^h_{j}-u^h_{j'}}
+\approx\abs{u^\mathrm{ref}_j}\cdot
+\begin{cases}
+\order{h^{P+1}},&\text{smooth},\\
+\order{1},&\text{jump},
+\end{cases}
+$$
+
+$$
+\implies\oint_{\partial E_j}\abs{u^h_{j}-u^h_{j'}}^2\cdot h
+\approx\abs{u^h_{j}-u^h_{j'}}^2\cdot\underbrace{\abs{\partial E_j}\cdot h}_{h^{D}}
+\approx\abs{u^\mathrm{ref}_j}\cdot
+\begin{cases}
+\order{h^{2P+2+D}},&\text{smooth},\\
+\order{h^{D}},&\text{jump},
+\end{cases}
+$$
+
+$$
+\implies
+\frac{\oint_{\partial E_j}\abs{u^h_{j}-u^h_{j'}}^2\cdot h}{\abs{u^\mathrm{ref}_j}^2\cdot h^{P+1}\cdot h^D}
+\approx
+\begin{cases}
+\order{h^{+P+1}}\ll1,&\text{smooth},\\
+\order{h^{-P-1}}\gg1,&\text{jump},
+\end{cases}
 $$
 
 ### 2.2.3. Oscillation energy estimations
@@ -262,33 +372,92 @@ $$
 \Delta K_j = \int_{x_{j-1/2}}^{x_{j}}\left(u_{j}^{h}-u_{j-1}^{h}\right)^{2}\dd{x}+\int_{x_{j}}^{x_{j+1/2}}\left(u_{j}^{h}-u_{j+1}^{h}\right)^{2}\dd{x},
 $$
 
-which is the square of the $L_2$-norm of difference between the solution on $E_j$ and those on its immediate neighbors.
+Both the *integrals* and *extrapolations* are cheap.
 
-The integrals are as cheap as weighted summations of nodal values if solution points are also Gaussian quadrature points.
-
-The extrapolations are also cheap, since the coordinate map in this case is usually linear and therefore trivial.
-
-However, when it is generalized to *multi-dimensional* cases, extrapolations using nodal expansions in parametric coordinates are generally expensive, since it incurs solving a non-linear algebraic equation
+However, when it is generalized to *multi-dimensional* cases, one has to (iteratively) solve
 
 $$
 \mqty[x \\ y]_\text{query} = \mqty[x^h(\xi, \eta) \\ y^h(\xi, \eta)],
 $$
+
 for the value of $(\xi,\eta)$ from the given $(x,y)$ on a neighboring cell.
 
-Even worse, the solution of this equation might not exist, even for a 4-node quadrangular element:
+Even worse, the solution of this equation might not exist:
 
 ![](./coordmap.svg)
 
-It is an open problem to design an oscillation measure requiring no extrapolations.
-
-In the current work, we tried the following surface integral of value jumps
+In the current work, we use the following surface integral of value jumps
 
 $$
 \oint_{\partial E_j} \qty(u^h_{j}-u^h_{j'})^2,\quad
 j'\in\text{ neighbors of } E_j,
 $$
 
+which is a simplified case of the one used in variational reconstruction.
+
 Further tests on more challenging problems are still in progress.
+
+It is an open problem to design an oscillation measure requiring no extrapolations.
+
+# 3. Results
+
+Common settings:
+- Correction function: $$ g_2 $$ in [Huynh (2007)](https://doi.org/10.2514/6.2007-4079)
+- Temporal integration: TVD/SSP RK3 in [Gottlieb (2001)](https://doi.org/10.1137/s003614450036757x)
+
+## 3.1. One-dimensional problems
+
+Additional common settings:
+- Number of elements: $$ N_\text{cell} = 100 $$
+- Degree of element-wise polynomials: $$ P = 4 $$
+
+### 3.1.1. Sod's shock tube problem
+
+$$
+\mqty[\rho & u & p]_{t=0}
+=
+\begin{cases}
+\mqty[1 & 0 & 1], &x<0,\\
+\mqty[0.125 & 0 & 0.1], &x>0,\\
+\end{cases}
+$$
+
+| Density | Viscosity |
+|:-------:|:----:|
+| ![](./sod/Frame100.pdf) | ![](./sod/Viscosity.pdf) |
+
+### 3.1.2. Lax's shock tube problem
+
+$$
+\mqty[\rho & u & p]_{t=0}
+=
+\begin{cases}
+\mqty[0.445 & 0.698 & 3.528], &x<0,\\
+\mqty[0.5 & 0 & 0.571], &x>0,\\
+\end{cases}
+$$
+
+| Density | Viscosity |
+|:-------:|:----:|
+| ![](./lax/Frame100.pdf) | ![](./lax/Viscosity.pdf) |
+
+### 3.1.3. The Shu–Osher problem
+
+Proposed by [Shu (1989)](https://doi.org/10.1016/0021-9991(89)90222-2)
+
+$$
+\mqty[\rho & u & p]_{t=0}
+=
+\begin{cases}
+\mqty[3.857143 & 2.629369 & 10.33333], &x\in[0,1);\\
+\mqty[1+0.2\sin(5x) & 0 & 1], &x\in(1,10].
+\end{cases}
+$$
+
+| Density | Viscosity |
+|:-------:|:----:|
+| ![](./shu_osher/final/Frame100.pdf) | ![](./shu_osher/final/Viscosity.pdf) |
+
 ## 3.2. Multi-dimensional problems
 
 ### 3.2.0. Sod's shock tube problem in 3d
@@ -348,11 +517,11 @@ $$h\approx 0.05$$ by the proposed artificial viscosity:
 The proposed artificial viscosity
 
 - passes standard cases for testing shock capturing methods.
-- is sufficiently large near physical discontinuities, which succeeds in suppressing numerical oscillations.
-- is negligible in smooth regions, which maintains the high-order accuracy of the DG or FR solution.
+- succeeds in suppressing numerical oscillations near physical discontinuities.
+- maintains the high-order accuracy of the DG or FR solution in smooth regions.
 
 Further improvements might include
 
-- more accurate estimation of oscillation energy.
+- more accurate estimation of the oscillation energy.
 - more smooth distribution of the artificial viscosity.
 - incorporating positivity-preserving mechanisms.
