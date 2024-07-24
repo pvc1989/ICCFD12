@@ -1,3 +1,8 @@
+# domain: my-site.github.io       # if you want to force HTTPS, specify the domain without the http at the start, e.g. example.com
+# url: https://my-site.github.io  # the base hostname and protocol for your site, e.g. http://example.com
+# baseurl: /REPOSITORY-NAME/      # place folder name if the site is served in a subfolder
+baseurl: /ICCFD12
+
 defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/front-matter-defaults/>功能进行配置
   - scope:
       path: "" # an empty string here means all files in the project
@@ -27,17 +32,17 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
             - | # PVC-style
               <link
                 rel="stylesheet"
-                href="/assets/css/pvcstyle.css"
+                href="./assets/css/pvcstyle.css"
               />
             - | # 网站小图标，可换成你自己的图片，改href中的部分即可
               <link
                 rel="apple-touch-icon-precomposed"
-                href="/riemann2d/animation.gif?s=320"
+                href="./riemann2d/animation.gif?s=320"
               />
               <link
                 rel="shortcut
                 icon"
-                href="/riemann2d/animation.gif?s=32"
+                href="./riemann2d/animation.gif?s=32"
               />
             - | # 来自lanyon的页面样式，不要改
               <link
@@ -88,7 +93,7 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
             disable: false # 是否不显示sidebar
             avatar: # 侧边栏显示的头像
               enable: true
-              img: /riemann2d/animation.gif # 头像的地址
+              img: ./riemann2d/animation.gif # 头像的地址
             nav: # 导航部分的内容，你也可以自己增加文字、图标（来自fontawesome）和对应的链接
               # - title: '<i class="fas fa-home fa-fw"></i> 首页'
               #   href: /  # https://<user>.github.io/miniWiki/ or http://localhost:4000
@@ -169,7 +174,7 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
           mathjax: # 数学公式
             enable: true
             append: |
-              <script src="/assets/js/mathjax-load.js" async></script>
+              <script src="./assets/js/mathjax-load.js" async></script>
           mermaid: # mermaid图插件
             enable: true
             append: |
