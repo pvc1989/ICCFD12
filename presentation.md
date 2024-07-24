@@ -24,7 +24,7 @@ title: Presentation
 ## 1.2. Shock capturing techniques for DG and FR
 
 - Limiter
-  - *simple compact WENO* by [Zhong (2013)](https://doi.org/10.1016/j.jcp.2012.08.028) and [Zhu (2013)](https://doi.org/10.1016/j.jcp.2013.04.012)
+  - *simple compact WENO* by [Zhong (2013)](https://doi.org/10.1016/j.jcp.2012.08.028) and [Zhu (2013)](https://doi.org/10.1016/j.jcp.2013.04.012)<a href name="simple-weno" />
   - *$$p$$-weighted* by [Li (2020)](https://doi.org/10.1016/j.jcp.2020.109246)
   - *multi-resolution WENO* by [Zhu (2023)](https://doi.org/10.1007/s42967-023-00272-y)
 - Filter
@@ -139,15 +139,21 @@ $$
 
 and look like
 
-![](./fr/HuynhLumping.svg)
+| Typical Correction Functions |
+| :--------------------------: |
+|  ![](./fr/HuynhLumping.svg)  |
 
 The original flux (disconstinuous on element interfaces) is reconstructed to be $$ C_0 $$ constinuous in global:
 
-![](./fr/FRonLegendreRoots.svg)
+| Flux Reconstruction Demo |
+| :--------------------------: |
+|  ![](./fr/FRonLegendreRoots.svg) |
 
 Some choices of $g$ lead to the equivalent DG schemes:
 
-![](./fr/equivalence.svg)
+| Equivalence between DG and FR |
+| :--------------------------: |
+|  ![](./fr/equivalence.svg) |
 
 ### 2.1.3. Direct viscous fluxes on element interfaces
 
@@ -325,8 +331,9 @@ $$
 
 ⚠️ To avoid 0-in-divisor:
 
-
-![](./sod3d/old/Frame50.png)
+| Large $$\nu$$ caused by $$0$$-in-divisor |
+| :--------------------------: |
+|  ![](./sod3d/old/Frame50.png) |
 
 $$
 u^h_j\in \mathbb{P}_{P}(E_j),\quad \forall j,
@@ -384,7 +391,9 @@ for the value of $(\xi,\eta)$ from the given $(x,y)$ on a neighboring cell.
 
 Even worse, the solution of this equation might not exist:
 
-![](./coordmap.svg)
+| Failed Coordinate Map |
+| :-------------------: |
+|  ![](./coordmap.svg)  |
 
 In the current work, we use the following surface integral of value jumps
 
@@ -496,11 +505,15 @@ Two shocks interfere with each other:
 
 Proposed by [Woodward (1984)](https://doi.org/10.1016/0021-9991(84)90142-6)
 
-![](./double_mach/sketch.svg)
+| Sketch of the Double Mach Reflection Problem |
+| :-------------------: |
+|  ![](./double_mach/sketch.svg)  |
 
-$$h\approx 0.02$$, $$P=2$$ with a (simple) WENO limiter:
+$$h\approx 0.02$$, $$P=2$$ with the [simple compact WENO limiter](#simple-weno):
 
-![](./double_mach/h=2e-2/p=2_limiter_rho.png)
+|      Reference Solution Given by Limiter      |
+| :-------------------------------------------: |
+| ![](./double_mach/h=2e-2/p=2_limiter_rho.png) |
 
 $$h\approx 0.05$$ by the proposed artificial viscosity:
 
