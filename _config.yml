@@ -11,7 +11,6 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
         default:
           body:
             theme-base: theme-base-0f # 可选的主题色包括08~0f，见 <https://github.com/poole/lanyon>
-            layout-reverse: false # 开启后sidebar在右边，反之左边
             sidebar-overlay: false # 开启后正文不随sidebar移动而移动
           append_to_head: # 通过内嵌html的方式引入并定制插件，删改前确定知道自己在做什么。定制插件的方式可以参考这篇文章 <https://wu-kan.cn/_posts/2019-01-18-基于Jekyll搭建个人博客/>
             - | #一些页面优化标签，看不懂可跳过
@@ -22,12 +21,6 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
               <meta
                 http-equiv="content-type"
                 content="text/html; charset=utf-8"
-              />
-              <link
-                rel="alternate"
-                href="/feed.xml"
-                title="RSS"
-                type="application/rss+xml"
               />
             - | # PVC-style
               <link
@@ -97,20 +90,6 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
             nav: # 导航部分的内容，你也可以自己增加文字、图标（来自fontawesome）和对应的链接
               # - title: '<i class="fas fa-home fa-fw"></i> 首页'
               #   href: /  # https://<user>.github.io/miniWiki/ or http://localhost:4000
-              # - title: '<i class="fas fa-tags fa-fw"></i> 数学'
-              #   href: /#数学
-              # - title: '<i class="fas fa-tags fa-fw"></i> 物理'
-              #   href: /#物理
-              # - title: '<i class="fas fa-tags fa-fw"></i> 算法'
-              #   href: /#算法
-              # - title: '<i class="fas fa-tags fa-fw"></i> 编程'
-              #   href: /#编程
-              # - title: '<i class="fas fa-tags fa-fw"></i> C/C++'
-              #   href: /programming/languages/cpp
-              # - title: '<i class="fas fa-tags fa-fw"></i> Python'
-              #   href: /programming/languages/python
-              # - title: '<i class="fas fa-tags fa-fw"></i> 文档'
-              #   href: /#文档
             jekyll-toc: # 侧边栏的目录插件，https://github.com/allejo/jekyll-toc
               enable: true
               prepend: | # 目录过长时自动折叠
@@ -128,6 +107,17 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
                   }
                   .sidebar-toggle {
                     position: fixed;
+                  }
+                  .sidebar {
+                    left: -24rem;
+                    width: 24rem;
+                  }
+                  #sidebar-checkbox:checked ~ .sidebar,
+                  #sidebar-checkbox:checked ~ .wrap,
+                  #sidebar-checkbox:checked ~ .sidebar-toggle {
+                    -webkit-transform: translateX(24rem);
+                        -ms-transform: translateX(24rem);
+                            transform: translateX(24rem);
                   }
                 </style>
               - | # 侧边栏头像效果
