@@ -465,7 +465,7 @@ $$
 
 | Density | Viscosity |
 |:-------:|:----:|
-| ![](./shu_osher/final/Frame100.pdf) | ![](./shu_osher/final/Viscosity.pdf) |
+| ![](./shu_osher/Frame100.pdf) | ![](./shu_osher/Viscosity.pdf) |
 
 ## 3.2. Multi-dimensional problems
 
