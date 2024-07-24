@@ -1,11 +1,11 @@
 ---
 layout: page
-title: ICCFD12
+title: Presentation
 ---
 
 <div class="center">
   <h1>A Novel Energy-based Artificial Viscosity for Suppressing Numerical Oscillations in Discontinuous Galerkin and Flux Reconstruction Schemes</h1>
-  <h2>Weicheng Pei and Yu-Xin Ren</h2>
+  <h2>[Weicheng Pei](weicheng.pei@icloud.com) and [Yu-Xin Ren](ryx@tsinghua.edu.cn)</h2>
   <h3>Institute of Fluid Mechanics, Tsinghua University</h3>
 </div>
 
@@ -14,8 +14,8 @@ title: ICCFD12
 ## 1.1. High-order schemes for unstructured grids
 
 - FV (finite volume)
-  - (compact) least squares
-  - variational reconstruction
+  - (compact) least squares by [Wang (2016)](https://doi.org/10.1016/j.jcp.2016.03.048)
+  - variational reconstruction [Wang (2017)](https://doi.org/10.1016/j.jcp.2017.02.031)
 - DG (discontinuous Galerkin)
   - modal vs. nodal
   - Legendre vs. Lobatto
@@ -24,7 +24,7 @@ title: ICCFD12
 ## 1.2. Shock capturing techniques for DG and FR
 
 - Limiter
-  - *simple compact WENO* by [Zhong (2013)](https://doi.org/10.1016/j.jcp.2012.08.028), [Zhu (2013)](https://doi.org/10.1016/j.jcp.2013.04.012)
+  - *simple compact WENO* by [Zhong (2013)](https://doi.org/10.1016/j.jcp.2012.08.028) and [Zhu (2013)](https://doi.org/10.1016/j.jcp.2013.04.012)
   - *$$p$$-weighted* by [Li (2020)](https://doi.org/10.1016/j.jcp.2020.109246)
   - *multi-resolution WENO* by [Zhu (2023)](https://doi.org/10.1007/s42967-023-00272-y)
 - Filter
