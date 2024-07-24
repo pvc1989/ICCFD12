@@ -433,7 +433,7 @@ $$
 
 | Density | Viscosity |
 |:-------:|:----:|
-| ![](./sod/Frame100.pdf) | ![](./sod/Viscosity.pdf) |
+| ![](./sod/Frame100.svg) | ![](./sod/Viscosity.svg) |
 
 ### 3.1.2. Lax's shock tube problem
 
@@ -448,7 +448,7 @@ $$
 
 | Density | Viscosity |
 |:-------:|:----:|
-| ![](./lax/Frame100.pdf) | ![](./lax/Viscosity.pdf) |
+| ![](./lax/Frame100.svg) | ![](./lax/Viscosity.svg) |
 
 ### 3.1.3. The Shu–Osher problem
 
@@ -465,7 +465,7 @@ $$
 
 | Density | Viscosity |
 |:-------:|:----:|
-| ![](./shu_osher/Frame100.pdf) | ![](./shu_osher/Viscosity.pdf) |
+| ![](./shu_osher/Frame100.svg) | ![](./shu_osher/Viscosity.svg) |
 
 ## 3.2. Multi-dimensional problems
 
