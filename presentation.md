@@ -483,11 +483,11 @@ $$
 The one we solve is
 
 $$
-\begin{bmatrix}\rho & u & v & p\end{bmatrix}=\begin{cases}
-\begin{bmatrix}1.5 & 0 & 0 & 1.5\end{bmatrix}, & (x,y)\in(0.8,1)\times(0.8,1),\\
-\begin{bmatrix}0.5323 & 1.206 & 0 & 0.3\end{bmatrix}, & (x,y)\in(0,0.8)\times(0.8,1),\\
-\begin{bmatrix}0.138 & 1.206 & 1.206 & 0.029\end{bmatrix}, & (x,y)\in(0,0.8)\times(0,0.8),\\
-\begin{bmatrix}0.5323 & 0 & 1.206 & 0.3\end{bmatrix}, & (x,y)\in(0.8,1)\times(0,0.8),
+\begin{bmatrix}\rho \\ u \\ v \\ p\end{bmatrix}_{t=0}=\begin{cases}
+\begin{bmatrix}1.5 & 0 & 0 & 1.5\end{bmatrix}^T, & (x,y)\in(0.8,1)\times(0.8,1),\\
+\begin{bmatrix}0.5323 & 1.206 & 0 & 0.3\end{bmatrix}^T, & (x,y)\in(0,0.8)\times(0.8,1),\\
+\begin{bmatrix}0.138 & 1.206 & 1.206 & 0.029\end{bmatrix}^T, & (x,y)\in(0,0.8)\times(0,0.8),\\
+\begin{bmatrix}0.5323 & 0 & 1.206 & 0.3\end{bmatrix}^T, & (x,y)\in(0.8,1)\times(0,0.8),
 \end{cases}
 $$
 
@@ -508,6 +508,16 @@ Proposed by [Woodward (1984)](https://doi.org/10.1016/0021-9991(84)90142-6)
 | Sketch of the Double Mach Reflection Problem |
 | :-------------------: |
 |  ![](./double_mach/sketch.svg)  |
+
+
+$$
+\mqty[\rho \\ u \\ v \\ p]_{t=0}
+=
+\begin{cases}
+\mqty[1.4 & 0 & 0 & 1.0]^T, &y<\sqrt{3}(x-x_0);\\
+\mqty[8.0 \\ 8.25\cos(-30^\circ) \\ 8.25\sin(-30^\circ) \\116.5], &y>\sqrt{3}(x-x_0).
+\end{cases}
+$$
 
 $$h\approx 0.02$$, $$P=2$$ with the [simple compact WENO limiter](#simple-weno):
 
