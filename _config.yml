@@ -88,8 +88,8 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
               enable: true
               img: ./riemann2d/animation.gif # 头像的地址
             nav: # 导航部分的内容，你也可以自己增加文字、图标（来自fontawesome）和对应的链接
-              # - title: '<i class="fas fa-home fa-fw"></i> 首页'
-              #   href: /  # https://<user>.github.io/miniWiki/ or http://localhost:4000
+              - title: '<i class="fa-brands fa-github fa-fw"></i> miniCFD — code for generating results in this work'
+                href: https://github.com/pvc1989/miniCFD
             jekyll-toc: # 侧边栏的目录插件，https://github.com/allejo/jekyll-toc
               enable: true
               prepend: | # 目录过长时自动折叠
@@ -151,13 +151,6 @@ defaults: # 将所有配置选项使用<https://jekyllrb.com/docs/configuration/
                     transform: rotate3d(0, 1, 0, -180deg);
                   }
                 </style>
-              - | # 觉得我的内容不错，让更多的人知道它吧！
-                <div>
-                  <i class="fas fa-home fa-fw"></i>
-                  <a href="https://github.com/pvc1989/miniCFD">
-                    Fork/Star me on GitHub
-                  </a>
-                </div>
         page:
           masthead: # 显示顶栏
             enable: false
