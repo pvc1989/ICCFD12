@@ -3,10 +3,13 @@ layout: page
 title: Presentation
 ---
 
-<div class="center">
-  <h1>A Novel Energy-based Artificial Viscosity for Suppressing Numerical Oscillations in Discontinuous Galerkin and Flux Reconstruction Schemes</h1>
-  <h2>[Weicheng Pei](weicheng.pei@icloud.com) and [Yu-Xin Ren](ryx@tsinghua.edu.cn)</h2>
-  <h3>Institute of Fluid Mechanics, Tsinghua University</h3>
+<div class="title">
+  <h2>A Novel Energy-based Artificial Viscosity for Suppressing Numerical Oscillations in Discontinuous Galerkin and Flux Reconstruction Schemes</h2>
+  <b>
+    Weicheng Pei <a href="mailto:weicheng.pei@icloud.com"><i class="fa fa-envelope"></i></a> and
+    Yu-Xin Ren <a href="mailto:ryx@tsinghua.edu.cn"><i class="fa fa-envelope"></i></a>
+  </b>
+  <p>Institute of Fluid Mechanics, Tsinghua University, Beijing, China</p>
 </div>
 
 # 1. Introduction
